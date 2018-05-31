@@ -2,13 +2,15 @@ const path = require("path");
 const express = require("express");
 const uuidv4 = require("uuid/v4");
 const ws = require("ws");
+const http = require('http');
 
 const app = express();
+const server = http.createServer(app);
 
 const PUBLIC_FOLDER = path.join(__dirname, "../public");
 const PORT = process.env.PORT || 5000;
 
-const wss = new ws.Server({ port: 8081 });
+const wss = new ws.Server({server});
 wss.on("connection", function connection(ws) {
     ws.on("message", function incoming(data) {
         console.log("received: %s", data);
@@ -35,4 +37,4 @@ app.get("/:channel", (req, res, next) => {
 
 app.use(express.static(PUBLIC_FOLDER));
 
-app.listen(PORT, () => console.log(`Listening on port ${PORT}!`));
+server.listen(PORT, () => console.log(`Listening on port ${PORT}!`));
